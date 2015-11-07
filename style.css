@@ -1,0 +1,71 @@
+#game {
+    border: 1px solid;
+    width: 58em;
+    height: 27em;
+}
+.inventory {
+	float: left;
+	width: 8em;
+	height: 100%;
+	border-right: 1px solid;
+	padding-bottom: -20px;
+}
+.title {
+	display: block;
+	padding: 5px;
+	border-bottom: 1px solid;
+	margin-bottom: 5px;
+	background-color: #ccc;
+}
+.title-mid {
+	border-top: 1px solid;
+}
+.item {
+	padding-left: 5px;
+}
+.stats .item {
+	padding-bottom: 5px;
+}
+.stats {
+	float: right;
+	width: 8em;
+	height: 50%;
+	border-left: 1px solid;
+}
+.divider {
+	clear: right;
+}
+.healthbar {
+	width: 25px;
+	border: 1px solid;
+	display: inline-block;
+	height: 7px
+}
+.healthbar-wide {
+	width: 7em;
+}
+.bar {
+	width: 100%;
+	background-color: #000;
+	display: inline-block;
+	height: 7px;
+}
+.dur-txt {
+	font-size: 8pt;
+}
+.map {
+	font-size: 25pt;
+	text-align: center;
+	float: left;
+}
+.map .tile {
+	width: 1em;
+	display: inline-block;
+	text-align: center;
+	cursor: pointer;
+	height: 1.15em;
+	overflow: hidden;
+}
+.map .tile:hover {
+	background-color: #ddd;
+}

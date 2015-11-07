@@ -1,0 +1,128 @@
+<!-- Javasscript -->
+	<script type="text/javascript" src="vue.js"></script>
+	<script type="text/javascript" src="mousetrap.js"></script>
+	<script type="text/javascript" src="maps.js"></script>
+	<script type="text/javascript" src="tiles.js"></script>
+	<script type="text/javascript" src="items.js"></script>
+<!-- CSS -->
+	<link rel="stylesheet" href="style.css">
+
+<!-- Display -->
+<div id="game">
+
+	<!-- Inventory -->
+	<span class="inventory">
+		<b class="title">Inventory</b>
+		<div v-for="item in inventory" class="item">
+			{{{ '&#'+item.html+';' }}}
+			{{ item.name }}
+			<span v-if="item.dur" class="healthbar">
+				<span class="bar" style="width:{{ item.dur/item.max_dur*100 }}%"></span>
+			</span>
+			<span v-if="item.dur" class="dur-txt">{{ item.dur }}%</span>
+		</div>
+	</span>
+
+	<span class="map">
+		<div v-for="(ri,row) in map.data">
+			<div v-for="(ti,tile) in row" class="tile" v-on:mouseover="desc(tile)">
+				<span v-if="ti!=player.x || ri!=player.y">{{{ '&#'+tiles[tile].html+';' }}}</span>
+				<span v-if="ti==player.x && ri==player.y">{{{ '&#'+tiles[3].html+';' }}}</span>
+			</div>
+		</div>
+	</span>
+
+	<span class="stats">
+		<b class="title">Player</b>
+		<div class="item">
+			<b>HP:</b> <span class="dur-txt">{{ player.hp/player.max_hp*100 }}%</span>
+			<br><span class="healthbar healthbar-wide"><span class="bar" style="width:{{ player.hp/player.max_hp*100 }}%"></span></span>
+		</div>
+		<div class="item">
+			<b>Gold:</b> {{ player.gold }}
+		</div>
+	</span>
+
+	<span class="stats">
+		<b class="title title-mid">Info</b>
+		<div class="item">
+			{{ description }}
+		</div>
+	</span>
+
+</div>
+
+<!-- Game -->
+<script type="text/javascript">
+var vm = new Vue({
+	el: '#game',
+
+	data: {
+		player: {
+			hp: 85,
+			max_hp: 100,
+			gold: 0,
+			x: 10,
+			y: 5
+		},
+		map: null,
+		inventory: [],
+		tiles: tiles,
+		description: ''
+	},
+
+	ready: function() {
+		this.giveItem(['sword','shield']);
+		this.loadMap('test');
+	},
+
+	methods: {
+		giveItem: function( ref ){
+			if(ref.constructor === Array) 
+				for (var i = 0; i <= ref.length - 1; i++)
+					this.giveItem(ref[i]);
+
+			else if(ref in items) this.inventory.push(items[ref]);
+		},
+		loadMap: function( id )
+		{
+			if(id in maps){
+				this.map = maps[id];
+				this.description = this.map.desc;
+			}
+		},
+		getTile: function( tx, ty )
+		{
+			var find = tiles[this.map.data[ty][tx]];
+			if(find !== undefined) return find;
+			return false;
+		},
+		move: function(dir)
+		{
+			var px = this.player.x;
+			var py = this.player.y;
+			if(dir=='left') px--;
+			if(dir=='right') px++;
+			if(dir=='up') py--;
+			if(dir=='down') py++;
+			py = Math.max(Math.min(py, 10), 0);
+			px = Math.max(Math.min(px, 19), 0);
+			var tile = this.getTile(px,py);
+			if(tile && tile.solid) return;
+			this.player.y = py;
+			this.player.x = px;
+		},
+		desc: function( tile )
+		{
+			if(this.tiles[tile].txt) this.description = this.tiles[tile].txt;
+			else this.description = this.map.desc;
+		}
+	}
+
+});
+
+Mousetrap.bind('w', function(){ vm.move('up') });
+Mousetrap.bind('a', function(){ vm.move('left') });
+Mousetrap.bind('s', function(){ vm.move('down') });
+Mousetrap.bind('d', function(){ vm.move('right') });
+</script>
